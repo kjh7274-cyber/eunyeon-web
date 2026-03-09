@@ -1225,7 +1225,7 @@ root.render(<App />);
 }
 
 // =====================================================================================
-// [함수] 관리자 페이지 HTML
+// [함수] 관리자 페이지 HTML (상태 변경 및 삭제 버튼 포함)
 // =====================================================================================
 function getAdminHTML(contacts: any[]): string {
   return `
@@ -1236,42 +1236,54 @@ function getAdminHTML(contacts: any[]): string {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Eunyeon Admin Center</title>
       <script src="https://cdn.tailwindcss.com"></script>
-      <style>
-        body { background-color: #020617; color: #fff; font-family: sans-serif; }
-        .gold-text { color: #D4AF37; }
-      </style>
     </head>
-    <body class="p-6 md:p-12">
+    <body class="bg-[#020617] text-white p-6 md:p-12 font-sans">
       <div class="max-w-6xl mx-auto">
         <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-          <h1 class="text-2xl font-bold tracking-tight">Eunyeon <span class="gold-text">Admin Center</span></h1>
+          <h1 class="text-2xl font-bold tracking-tight">Eunyeon <span class="text-[#D4AF37]">Admin Center</span></h1>
           <div class="flex items-center gap-6">
-            <span class="text-zinc-400 text-sm">신규 문의: <b class="gold-text">${contacts.length}</b>건</span>
+            <span class="text-zinc-400 text-sm">총 문의: <b class="text-[#D4AF37]">\${contacts.length}</b>건</span>
             <a href="/admin/logout" class="text-xs bg-white/10 px-3 py-1.5 rounded hover:bg-white/20 transition-colors">로그아웃</a>
           </div>
         </header>
 
-        <div class="overflow-x-auto rounded-lg border border-white/10">
+        <div class="overflow-x-auto rounded-lg border border-white/10 bg-slate-900/50">
           <table class="w-full text-left text-sm">
             <thead class="bg-white/5 text-zinc-400 uppercase text-[10px] tracking-widest font-semibold">
               <tr>
                 <th class="p-4">접수 일시</th>
                 <th class="p-4">성함/회사</th>
                 <th class="p-4">연락처</th>
-                <th class="p-4">서비스</th>
                 <th class="p-4">상세 내용</th>
+                <th class="p-4 text-center">상태</th>
+                <th class="p-4 text-center">관리</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
-              ${contacts.map(c => `
+              \${contacts.map(c => \`
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                  <td class="p-4 text-zinc-500 whitespace-nowrap">${new Date(c.created_at).toLocaleString('ko-KR')}</td>
-                  <td class="p-4 font-bold text-zinc-100">${c.name}</td>
-                  <td class="p-4 text-zinc-300">${c.phone}</td>
-                  <td class="p-4"><span class="bg-[#D4AF37]/10 text-[#D4AF37] px-2 py-1 rounded text-[11px] font-bold">${c.service}</span></td>
-                  <td class="p-4 text-zinc-400 leading-relaxed">${c.message}</td>
+                  <td class="p-4 text-zinc-500 whitespace-nowrap">\${new Date(c.created_at).toLocaleString('ko-KR')}</td>
+                  <td class="p-4 font-bold text-zinc-100">\${c.name}<br/><span class="text-xs text-zinc-500 font-normal">\${c.service}</span></td>
+                  <td class="p-4 text-zinc-300">\${c.phone}</td>
+                  <td class="p-4 text-zinc-400 max-w-xs truncate" title="\${c.message}">\${c.message}</td>
+                  <td class="p-4 text-center">
+                    <form method="POST" action="/admin/status" class="inline">
+                      <input type="hidden" name="id" value="\${c.id}" />
+                      <input type="hidden" name="status" value="\${c.status || '대기중'}" />
+                      <button type="submit" class="px-3 py-1 rounded text-xs font-bold transition-colors \${c.status === '처리완료' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30'}">
+                        \${c.status || '대기중'}
+                      </button>
+                    </form>
+                  </td>
+                  <td class="p-4 text-center">
+                    <form method="POST" action="/admin/delete" class="inline" onsubmit="return confirm('정말 이 문의를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.');">
+                      <input type="hidden" name="id" value="\${c.id}" />
+                      <button type="submit" class="text-red-400 hover:text-red-300 bg-red-400/10 hover:bg-red-400/20 px-3 py-1 rounded text-xs transition-colors">삭제</button>
+                    </form>
+                  </td>
                 </tr>
-              `).join('')}
+              \`).join('')}
+              \${contacts.length === 0 ? '<tr><td colspan="6" class="p-8 text-center text-zinc-500">들어온 문의가 없습니다.</td></tr>' : ''}
             </tbody>
           </table>
         </div>
