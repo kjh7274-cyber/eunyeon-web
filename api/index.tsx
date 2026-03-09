@@ -1,3 +1,6 @@
+export const config = {
+  runtime: 'edge'
+}
 import { Hono } from 'hono'
 
 const app = new Hono()
@@ -5,9 +8,9 @@ const app = new Hono()
 const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAA21BMVEVMaXEVEQtEPDMcGBIlIh0WEgwKCQcrJR8bGRWdmZMiHhceGhQeGhNnX1WTi4F8dGpcU0lRST+ro5oIERkMGSMPHSgKFBwOGyUHDxQMFx8ECg8DBAYaLTsZKjcWJjM7OTQRICw3NTBVUUpfWlJbVk9LSEFQTEYWIy5GQj1jXlZAPThpYlqLgnhtZ1+QiH5ybGSEfHOdlIl+d26Xj4R5cWilm4+soZUMExgyLyohHxorKSQODQoVExC4rqO9tKizqJzCuq8oOETIwLbSzMSppJ7r5t5ATVff2tNRX2oCR85BAAAAPXRSTlMAUkzV+y8WA/7+knGsdb+fv9zc///////////////////////////////////////////////////////+XYtPDgAAAAlwSFlzAAALEwAACxMBAJqcGAAAGkdJREFUeNrtnWd34sgShj02tsGenbDKEqAAEpJQQiIIkQzG4f//oltVLYJt9hvM2PdQ47Cz955ZPfNW6K6uli8uzna2s53tbGc729nOdrazne1sZzvb2b643Z5RPhfCzeXNxe3t11finyy5+nb7pVHw0a9/PD7VUu/79cWXRSGMnw9PqyANk8C6+6IoDGP29BgFg2EPUBLn7uZrohBGlgyGgyzKojCOUvuLodCjXv5clBi9XhZFQRQgCqnyRZIxPuXt5Y8HxKgthr0eAwmCKAn7UUKx8vlloee7/uffx6eHKBkshgPSIyBLEoj6fhR1v3+7+dws9GQ3lz/mTy/rIBoMCaOXZRkwbC2Ogyz9fXd5+1lZ6JluL3/++/K06gXZcDFA62VAEjt9QkmTNE0RJYHY/313zVhuP1t0gxY/waUe11E0XKBTkR69XuJr2tjqIwRav58m/bgfEMvl7cWnEaZ8CkbxMsuiwWI2HKJbIccgsCeaPFIRBSCIo9/vJ8CSBr0o/n1H8fK3hSn/4zeX//yYvzw9LrKotpjNFsMFgfQGg8CZEoYsytrYiQGBOPogSZrGoEsv6v/+fn99e/F3aG63/8lbhJg9Pj2t1lk2YBQMAyxxpxonqhraSJG1qh2mBAGfcQgcffgaZCTM/fXN7s8+LdD7Px4Zfv77ABCPs1rUG87mgLFADIQY9mJzonEKYKijkQzfZIXTqrpH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"
 
 app.get('/', (c) => {
-  // Vite(.env) 환경변수 가져오기
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  // 환경변수 대신 직접 값을 넣어서 연결을 강제합니다!
+  const supabaseUrl = 'https://hoilnupfbjxgkcuxmuic.supabase.co'; 
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaWxudXBmYmp4Z2tjdXhtdWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MDgzNDEsImV4cCI6MjA4ODI4NDM0MX0.3IHU3ibhM96WFvehRqffELK2k5b5vB8e_DHPEhbSo4k'; 
 
   return c.html(getHTML(LOGO_DATA_URI, supabaseUrl, supabaseKey))
 })
@@ -128,7 +131,7 @@ const SUPABASE_URL = "${supabaseUrl}";
 const SUPABASE_KEY = "${supabaseKey}";
 
 // Supabase 클라이언트 생성
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const supabase = (window.supabase && SUPABASE_URL !== "") ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 // =================== HEADER ===================
 const Header = ({ heroProgress }) => {
@@ -157,12 +160,15 @@ const Header = ({ heroProgress }) => {
         className="fixed top-0 left-0 w-full z-[100] px-6 py-5 md:px-12 md:py-6 flex justify-between items-center"
         style={{ backdropFilter: scrolled ? "blur(20px)" : "none" }}
       >
-        <motion.div style={{ backgroundColor: \`rgba(2, 6, 23, \${scrolled ? 0.8 : 0})\` }}
+        <motion.div
           className="absolute inset-0 border-b transition-colors duration-500"
-          style={{ borderColor: scrolled ? "rgba(255,255,255,0.06)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none" }}
+          style={{
+            backgroundColor: "rgba(2, 6, 23, " + (scrolled ? 0.8 : 0) + ")",
+            borderColor: scrolled ? "rgba(255,255,255,0.06)" : "transparent"
+          }}
         />
         <a href="#" className="relative flex items-center gap-3 group text-white">
-          <img src={LogoSrc} alt="Eunyeon" className="w-8 h-8 object-contain" />
+          <img src={LOGO_DATA_URI} alt="Eunyeon" className="w-8 h-8 object-contain" />
           <div className="flex flex-col leading-none">
             <span className="text-sm font-semibold tracking-[0.25em] text-white uppercase">Eunyeon</span>
             <span className="text-[10px] tracking-[0.15em] text-zinc-400 uppercase mt-0.5">Security & Facility</span>
@@ -191,8 +197,8 @@ const Header = ({ heroProgress }) => {
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 20 } }}
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
             className="fixed inset-0 z-[99] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8"
           >
             {navLinks.map((l, i) => (
@@ -217,7 +223,7 @@ const Header = ({ heroProgress }) => {
 
 // =================== HERO ===================
 const Hero = ({ containerRef, scrollYProgress }) => {
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
   const facadeScale = useTransform(smoothProgress, [0, 0.6], [1, 20]);
   const facadeOpacity = useTransform(smoothProgress, [0.5, 0.62], [1, 0]);
@@ -233,6 +239,7 @@ const Hero = ({ containerRef, scrollYProgress }) => {
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center bg-slate-950">
         <div className="absolute inset-0 z-50 vignette-overlay" />
 
+        {/* 🟢 두 번째 레이어 (스크롤 후 나타나는 배경) -> 기존 사진 유지 */}
         <motion.div className="absolute inset-0 z-10 image-container" style={{ scale: officeScale }}>
           <img
             src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop"
@@ -273,12 +280,13 @@ const Hero = ({ containerRef, scrollYProgress }) => {
           </motion.div>
         </motion.div>
 
+        {/* 🟢 첫 번째 레이어 (접속 시 맨 처음 보이는 화면) -> 새로 넣은 main-bg.jpg 적용 */}
         <motion.div
           className="absolute inset-0 z-30 image-container pointer-events-none"
           style={{ scale: facadeScale, opacity: facadeOpacity }}
         >
           <img
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
+            src="/main-bg.jpg"
             className="w-full h-full object-cover object-center"
             alt="Eunyeon Main Building"
           />
@@ -290,7 +298,7 @@ const Hero = ({ containerRef, scrollYProgress }) => {
           style={{ opacity: textOpacity, y: textY }}
         >
           <motion.div className="flex items-center gap-4 mb-6">
-            <img src={LogoSrc} alt="Eunyeon" className="w-24 h-24 md:w-32 md:h-32 object-contain opacity-90" />
+            <img src={LOGO_DATA_URI} alt="Eunyeon" className="w-24 h-24 md:w-32 md:h-32 object-contain opacity-90" />
           </motion.div>
           <h1 className="text-[14vw] md:text-[130px] font-light tracking-[0.15em] text-white leading-none mix-blend-overlay opacity-90">
             EUNYEON
@@ -411,7 +419,7 @@ const Services = () => {
       subtitle: "Security",
       desc: "국가 중요시설, 공공기관, 기업 사옥 등 고객의 소중한 자산과 시설을 체계적으로 보호합니다.",
       features: ["출입통제 및 방범", "순찰 및 질서 유지", "도난 및 화재 예방", "CCTV 통합 관제"],
-      image: "https://images.unsplash.com/photo-1618482914248-29272d021005?q=80&w=2000&auto=format&fit=crop", 
+      image: "/cctv-ai.jpg", 
       link: "#facility-security"
     },
     {
@@ -421,7 +429,7 @@ const Services = () => {
       subtitle: "Protection",
       desc: "철저한 교육을 이수한 전문 경호요원이 VIP의 신변을 위협요소로부터 완벽하게 보호합니다.",
       features: ["VIP 근접 경호", "행사장/식장 경호", "이동 차량 경호", "위협 상황 대응"],
-      image: "https://images.unsplash.com/photo-1505087342672-005697d812bd?q=80&w=2000&auto=format&fit=crop", 
+      image: "/bodyguard-ai.jpg", 
       link: "#personal-protection"
     },
     {
@@ -431,7 +439,7 @@ const Services = () => {
       subtitle: "Control",
       desc: "대규모 행사장, 복잡한 주차장 등에서 원활한 차량 흐름과 보행자의 안전을 확실하게 통제합니다.",
       features: ["주차장 차량 유도", "행사장 교통 통제", "보행자 안전 관리", "긴급 차량 동선 확보"],
-      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?q=80&w=2000&auto=format&fit=crop", 
+      image: "/traffic-ai.jpg", 
       link: "#traffic-control"
     },
     {
@@ -521,7 +529,7 @@ const FacilitySecuritySection = () => {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url(https://images.unsplash.com/photo-1618482914248-29272d021005?q=80&w=2000&auto=format&fit=crop)", 
+          backgroundImage: "url(/cctv-ai.jpg)", 
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: "brightness(0.2) saturate(0.5)",
@@ -596,7 +604,7 @@ const PersonalProtectionSection = () => {
           >
             <div className="relative overflow-hidden rounded-sm" style={{ aspectRatio: "4/3" }}>
               <img
-                src="https://images.unsplash.com/photo-1505087342672-005697d812bd?q=80&w=2000&auto=format&fit=crop" 
+                src="/bodyguard-ai.jpg" 
                 alt="Personal Protection"
                 className="w-full h-full object-cover brightness-90 saturate-75"
               />
@@ -703,7 +711,7 @@ const TrafficControlSection = () => {
           >
             <div className="relative overflow-hidden rounded-sm" style={{ aspectRatio: "4/3" }}>
               <img
-                src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?q=80&w=2000&auto=format&fit=crop" 
+                src="/traffic-ai.jpg" 
                 alt="Traffic Control"
                 className="w-full h-full object-cover brightness-90 saturate-75"
               />
@@ -1079,7 +1087,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-14">
         <div>
           <div className="flex items-center gap-3 mb-5">
-            <img src={LogoSrc} alt="Eunyeon" className="w-8 h-8 object-contain" />
+            <img src={LOGO_DATA_URI} alt="Eunyeon" className="w-8 h-8 object-contain" />
             <div>
               <p className="text-sm font-semibold tracking-[0.25em] text-white uppercase">Eunyeon</p>
               <p className="text-[10px] tracking-[0.15em] text-zinc-400 uppercase mt-0.5">Security & Facility</p>
