@@ -2,19 +2,93 @@ export const config = {
   runtime: 'edge'
 }
 import { Hono } from 'hono'
-import { handle } from 'hono/vercel' //
-const app = new Hono() //
+import { handle } from 'hono/vercel'
+import { getCookie, setCookie } from 'hono/cookie'
 
-const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAA21BMVEVMaXEVEQtEPDMcGBIlIh0WEgwKCQcrJR8bGRWdmZMiHhceGhQeGhNnX1WTi4F8dGpcU0lRST+ro5oIERkMGSMPHSgKFBwOGyUHDxQMFx8ECg8DBAYaLTsZKjcWJjM7OTQRICw3NTBVUUpfWlJbVk9LSEFQTEYWIy5GQj1jXlZAPThpYlqLgnhtZ1+QiH5ybGSEfHOdlIl+d26Xj4R5cWilm4+soZUMExgyLyohHxorKSQODQoVExC4rqO9tKizqJzCuq8oOETIwLbSzMSppJ7r5t5ATVff2tNRX2oCR85BAAAAPXRSTlMAUkzV+y8WA/7+knGsdb+fv9zc///////////////////////////////////////////////////////+XYtPDgAAAAlwSFlzAAALEwAACxMBAJqcGAAAGkdJREFUeNrtnWd34sgShj02tsGenbDKEqAAEpJQQiIIkQzG4f//oltVLYJt9hvM2PdQ47Cz955ZPfNW6K6uli8uzna2s53tbGc729nOdrazne1sZzvb2b643Z5RPhfCzeXNxe3t11finyy5+nb7pVHw0a9/PD7VUu/79cWXRSGMnw9PqyANk8C6+6IoDGP29BgFg2EPUBLn7uZrohBGlgyGgyzKojCOUvuLodCjXv5clBi9XhZFQRQgCqnyRZIxPuXt5Y8HxKgthr0eAwmCKAn7UUKx8vlloee7/uffx6eHKBkshgPSIyBLEoj6fhR1v3+7+dws9GQ3lz/mTy/rIBoMCaOXZRkwbC2Ogyz9fXd5+1lZ6JluL3/++/K06gXZcDFA62VAEjt9QkmTNE0RJYHY/313zVhuP1t0gxY/waUe11E0XKBTkR69XuJr2tjqIwRav58m/bgfEMvl7cWnEaZ8CkbxMsuiwWI2HKJbIccgsCeaPFIRBSCIo9/vJ8CSBr0o/n1H8fK3hSn/4zeX//yYvzw9LrKotpjNFsMFgfQGg8CZEoYsytrYiQGBOPogSZrGoEsv6v/+fn99e/F3aG63/8lbhJg9Pj2t1lk2YBQMAyxxpxonqhraSJG1qh2mBAGfcQgcffgaZCTM/fXN7s8+LdD7Px4Zfv77ABCPs1rUG87mgLFADIQY9mJzonEKYKijkQzfZIXTqrpH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"
+const app = new Hono()
 
+// [설정] 비밀번호 및 Supabase 정보
+const ADMIN_PASSWORD = "7274"; 
+const supabaseUrl = 'https://hoilnupfbjxgkcuxmuic.supabase.co'; 
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaWxudXBmYmp4Z2tjdXhtdWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MDgzNDEsImV4cCI6MjA4ODI4NDM0MX0.3IHU3ibhM96WFvehRqffELK2k5b5vB8e_DHPEhbSo4k'; 
+
+const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAA21BMVEVMaXEVEQtEPDMcGBIlIh0WEgwKCQcrJR8bGRWdmZMiHhceGhQeGhNnX1WTi4F8dGpcU0lRST+ro5oIERkMGSMPHSgKFBwOGyUHDxQMFx8ECg8DBAYaLTsZKjcWJjM7OTQRICw3NTBVUUpfWlJbVk9LSEFQTEYWIy5GQj1jXlZAPThpYlqLgnhtZ1+QiH5ybGSEfHOdlIl+d26Xj4R5cWilm4+soZUMExgyLyohHxorKSQODQoVExC4rqO9tKizqJzCuq8oOETIwLbSzMSppJ7r5t5ATVff2tNRX2oCR85BAAAAPXRSTlMAUkzV+y8WA/7+knGsdb+fv9zc///////////////////////////////////////////////////////+XYtPDgAAAAlwSFlzAAALEwAACxMBAJqcGAAAGkdJREFUeNrtnWd34sgShj02tsGenbDKEqAAEpJQQiIIkQzG4f//oltVLYJt9hvM2PdQ47Cz955ZPfNW6K6uli8uzna2s53tbGc729nOdrazne1sZzvb2b643Z5RPhfCzeXNxe3t11finyy5+nb7pVHw0a9/PD7VUu/79cWXRSGMnw9PqyANk8C6+6IoDGP29BgFg2EPUBLn7uZrohBGlgyGgyzKojCOUvuLodCjXv5clBi9XhZFQRQgCqnyRZIxPuXt5Y8HxKgthr0eAwmCKAn7UUKx8vlloee7/uffx6eHKBkshgPSIyBLEoj6fhR1v3+7+dws9GQ3lz/mTy/rIBoMCaOXZRkwbC2Ogyz9fXd5+1lZ6JluL3/++/K06gXZcDFA62VAEjt9QkmTNE0RJYHY/313zVhuP1t0gxY/waUe11E0XKBTkR69XuJr2tjqIwRav58m/bgfEMvl7cWnEaZ8CkbxMsuiwWI2HKJbIccgsCeaPFIRBSCIo9/vJ8CSBr0o/n1H8fK3hSn/4zeX//yYvzw9LrKotpjNFsMFgfQGg8CZEoYsytrYiQGBOPogSZrGoEsv6v/+fn99e/F3aG63/8lbhJg9Pj2t1lk2YBQMAyxxpxonqhraSJG1qh2mBAGfcQgcffgaZCTM/fXN7s8+LdD7Px4Zfv77ABCPs1rUG87mgLFADIQY9mJzonEKYKijkQzfZIXTqrpH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";
+
+// --- [메인 홈페이지] ---
 app.get('/', (c) => {
-  // 환경변수 대신 직접 값을 넣어서 연결을 강제합니다!
-  const supabaseUrl = 'https://hoilnupfbjxgkcuxmuic.supabase.co'; 
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvaWxudXBmYmp4Z2tjdXhtdWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MDgzNDEsImV4cCI6MjA4ODI4NDM0MX0.3IHU3ibhM96WFvehRqffELK2k5b5vB8e_DHPEhbSo4k'; 
-
   return c.html(getHTML(LOGO_DATA_URI, supabaseUrl, supabaseKey))
 })
 
+// --- [관리자 로그인 화면] ---
+app.get('/admin/login', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Eunyeon Admin | Login</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-950 text-white flex items-center justify-center h-screen font-sans">
+      <div class="bg-slate-900 p-10 rounded-lg border border-white/10 shadow-2xl w-full max-w-sm">
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-bold tracking-tighter text-[#D4AF37]">EUNYEON <span class="text-white">ADMIN</span></h1>
+          <p class="text-zinc-500 text-sm mt-2 font-medium">관리자 암호를 입력하세요.</p>
+        </div>
+        <form method="POST" action="/admin/login" class="flex flex-col gap-4">
+          <input type="password" name="password" placeholder="비밀번호" required 
+                 class="bg-slate-950 border border-zinc-700 px-4 py-3 rounded outline-none focus:border-[#D4AF37] transition-colors" />
+          <button type="submit" class="bg-[#D4AF37] text-black font-bold py-3 rounded hover:bg-[#F5D76E] transition-colors">로그인</button>
+        </form>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+// --- [관리자 로그인 처리] ---
+app.post('/admin/login', async (c) => {
+  const body = await c.req.parseBody();
+  if (body.password === ADMIN_PASSWORD) {
+    setCookie(c, 'admin_session', 'true', { maxAge: 60 * 60 * 24, httpOnly: true, path: '/' });
+    return c.redirect('/admin');
+  }
+  return c.html("<script>alert('비밀번호가 틀렸습니다.'); history.back();</script>");
+});
+
+// --- [관리자 메인 목록 (안전한 fetch 방식 적용 & 타입 오류 수정)] ---
+app.get('/admin', async (c) => {
+  const session = getCookie(c, 'admin_session');
+  if (session !== 'true') return c.redirect('/admin/login');
+
+  let contacts: any[] = [];
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/contacts?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error('데이터베이스 연동 실패');
+    contacts = (await res.json()) as any[]; 
+  } catch (err) {
+    return c.text("데이터를 불러오지 못했습니다. Vercel 네트워크 상태를 확인하세요.");
+  }
+
+  return c.html(getAdminHTML(contacts));
+});
+
+// --- [관리자 로그아웃] ---
+app.get('/admin/logout', (c) => {
+  setCookie(c, 'admin_session', '', { maxAge: 0, path: '/' });
+  return c.redirect('/admin/login');
+});
+
+// =====================================================================================
+// [함수] 메인 홈페이지 HTML (생략 없이 전체 포함)
+// =====================================================================================
 function getHTML(logoSrc: string, supabaseUrl: string, supabaseKey: string): string {
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -26,13 +100,13 @@ function getHTML(logoSrc: string, supabaseUrl: string, supabaseKey: string): str
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>
-<script src="https://cdn.tailwindcss.com"><\/script>
-<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"><\/script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin=""><\/script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin=""><\/script>
-<script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"><\/script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin=""></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin=""></script>
+<script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
@@ -125,15 +199,12 @@ body {
 const { useRef, useState, useEffect, useCallback } = React;
 const { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } = window.Motion;
 
-// =================== 환경변수 & Supabase 연동 ===================
 const LOGO_DATA_URI = "${logoSrc}";
 const SUPABASE_URL = "${supabaseUrl}";
 const SUPABASE_KEY = "${supabaseKey}";
 
-// Supabase 클라이언트 생성
 const supabase = (window.supabase && SUPABASE_URL !== "") ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-// =================== HEADER ===================
 const Header = ({ heroProgress }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -221,7 +292,6 @@ const Header = ({ heroProgress }) => {
   );
 };
 
-// =================== HERO ===================
 const Hero = ({ containerRef, scrollYProgress }) => {
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
 
@@ -239,7 +309,6 @@ const Hero = ({ containerRef, scrollYProgress }) => {
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center bg-slate-950">
         <div className="absolute inset-0 z-50 vignette-overlay" />
 
-        {/* 🟢 두 번째 레이어 (스크롤 후 나타나는 배경) -> 기존 사진 유지 */}
         <motion.div className="absolute inset-0 z-10 image-container" style={{ scale: officeScale }}>
           <img
             src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop"
@@ -280,7 +349,6 @@ const Hero = ({ containerRef, scrollYProgress }) => {
           </motion.div>
         </motion.div>
 
-        {/* 🟢 첫 번째 레이어 (접속 시 맨 처음 보이는 화면) -> 새로 넣은 main-bg.jpg 적용 */}
         <motion.div
           className="absolute inset-0 z-30 image-container pointer-events-none"
           style={{ scale: facadeScale, opacity: facadeOpacity }}
@@ -320,7 +388,6 @@ const Hero = ({ containerRef, scrollYProgress }) => {
   );
 };
 
-// =================== MARQUEE ===================
 const Marquee = () => {
   const items = ["시설경비", "신변보호", "혼잡교통유도", "건물관리", "Security", "Protection", "Control", "Management"];
   const doubled = [...items, ...items, ...items];
@@ -338,7 +405,6 @@ const Marquee = () => {
   );
 };
 
-// =================== ABOUT ===================
 const About = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -406,7 +472,6 @@ const About = () => {
   );
 };
 
-// =================== SERVICES (전체 요약) ===================
 const Services = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -519,7 +584,6 @@ const Services = () => {
   );
 };
 
-// =================== 1. 시설경비 섹션 ===================
 const FacilitySecuritySection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -586,7 +650,6 @@ const FacilitySecuritySection = () => {
   );
 };
 
-// =================== 2. 신변보호 섹션 ===================
 const PersonalProtectionSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -655,7 +718,6 @@ const PersonalProtectionSection = () => {
   );
 };
 
-// =================== 3. 혼잡교통유도 섹션 ===================
 const TrafficControlSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -727,7 +789,6 @@ const TrafficControlSection = () => {
   );
 };
 
-// =================== 4. 건물관리 섹션 ===================
 const FacilityManagementSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -797,7 +858,6 @@ const FacilityManagementSection = () => {
   );
 };
 
-// =================== WHY US ===================
 const WhyUs = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -852,7 +912,6 @@ const WhyUs = () => {
   );
 };
 
-// =================== PROCESS ===================
 const Process = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -902,7 +961,6 @@ const Process = () => {
   );
 };
 
-// =================== CONTACT ===================
 const Contact = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -922,7 +980,6 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // 1. Supabase 데이터베이스에 데이터 저장
       const { error: dbError } = await supabase
         .from('contacts')
         .insert([{ 
@@ -934,7 +991,6 @@ const Contact = () => {
         
       if (dbError) throw dbError;
       
-      // ✅ 2. 이메일 알림 발송 (방금 만든 Edge Function 호출!)
       const { error: emailError } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: formState.name, 
@@ -946,10 +1002,8 @@ const Contact = () => {
 
       if (emailError) {
         console.error("이메일 알림 발송 실패:", emailError);
-        // 이메일 실패해도 DB 저장은 되었으므로 계속 진행
       }
       
-      // 3. 화면 처리 (완료!)
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 4000);
       setFormState({ name: "", phone: "", service: "", message: "" });
@@ -1080,7 +1134,6 @@ const Contact = () => {
   );
 };
 
-// =================== FOOTER ===================
 const Footer = () => (
   <footer className="relative bg-slate-950 border-t border-white/[0.08] py-16">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -1138,7 +1191,6 @@ const Footer = () => (
   </footer>
 );
 
-// =================== APP ===================
 const App = () => {
   const heroContainerRef = useRef(null);
   const { scrollYProgress: heroScrollY } = useScroll({
@@ -1167,9 +1219,66 @@ const App = () => {
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
-<\/script>
+</script>
 </body>
-</html>`
+</html>`;
 }
 
-export default handle(app) //
+// =====================================================================================
+// [함수] 관리자 페이지 HTML
+// =====================================================================================
+function getAdminHTML(contacts: any[]): string {
+  return `
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Eunyeon Admin Center</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        body { background-color: #020617; color: #fff; font-family: sans-serif; }
+        .gold-text { color: #D4AF37; }
+      </style>
+    </head>
+    <body class="p-6 md:p-12">
+      <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+          <h1 class="text-2xl font-bold tracking-tight">Eunyeon <span class="gold-text">Admin Center</span></h1>
+          <div class="flex items-center gap-6">
+            <span class="text-zinc-400 text-sm">신규 문의: <b class="gold-text">${contacts.length}</b>건</span>
+            <a href="/admin/logout" class="text-xs bg-white/10 px-3 py-1.5 rounded hover:bg-white/20 transition-colors">로그아웃</a>
+          </div>
+        </header>
+
+        <div class="overflow-x-auto rounded-lg border border-white/10">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-white/5 text-zinc-400 uppercase text-[10px] tracking-widest font-semibold">
+              <tr>
+                <th class="p-4">접수 일시</th>
+                <th class="p-4">성함/회사</th>
+                <th class="p-4">연락처</th>
+                <th class="p-4">서비스</th>
+                <th class="p-4">상세 내용</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              ${contacts.map(c => `
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="p-4 text-zinc-500 whitespace-nowrap">${new Date(c.created_at).toLocaleString('ko-KR')}</td>
+                  <td class="p-4 font-bold text-zinc-100">${c.name}</td>
+                  <td class="p-4 text-zinc-300">${c.phone}</td>
+                  <td class="p-4"><span class="bg-[#D4AF37]/10 text-[#D4AF37] px-2 py-1 rounded text-[11px] font-bold">${c.service}</span></td>
+                  <td class="p-4 text-zinc-400 leading-relaxed">${c.message}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+export default handle(app)
