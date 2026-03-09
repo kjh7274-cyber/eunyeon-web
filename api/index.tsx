@@ -57,7 +57,7 @@ app.post('/admin/login', async (c) => {
   return c.html("<script>alert('비밀번호가 틀렸습니다.'); history.back();</script>");
 });
 
-// --- [관리자 메인 목록 (안전한 fetch 방식 적용 & 타입 오류 수정)] ---
+// --- [관리자 메인 목록] ---
 app.get('/admin', async (c) => {
   const session = getCookie(c, 'admin_session');
   if (session !== 'true') return c.redirect('/admin/login');
@@ -80,6 +80,55 @@ app.get('/admin', async (c) => {
   return c.html(getAdminHTML(contacts));
 });
 
+// --- [상태 변경 처리] ---
+app.post('/admin/status', async (c) => {
+  const session = getCookie(c, 'admin_session');
+  if (session !== 'true') return c.redirect('/admin/login');
+
+  const body = await c.req.parseBody();
+  const id = body.id;
+  const currentStatus = body.status;
+  const newStatus = currentStatus === '처리완료' ? '대기중' : '처리완료';
+
+  try {
+    await fetch(`${supabaseUrl}/rest/v1/contacts?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ status: newStatus })
+    });
+  } catch (e) {
+    console.error(e);
+  }
+  return c.redirect('/admin');
+});
+
+// --- [삭제 처리] ---
+app.post('/admin/delete', async (c) => {
+  const session = getCookie(c, 'admin_session');
+  if (session !== 'true') return c.redirect('/admin/login');
+
+  const body = await c.req.parseBody();
+  const id = body.id;
+
+  try {
+    await fetch(`${supabaseUrl}/rest/v1/contacts?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+  return c.redirect('/admin');
+});
+
 // --- [관리자 로그아웃] ---
 app.get('/admin/logout', (c) => {
   setCookie(c, 'admin_session', '', { maxAge: 0, path: '/' });
@@ -87,7 +136,7 @@ app.get('/admin/logout', (c) => {
 });
 
 // =====================================================================================
-// [함수] 메인 홈페이지 HTML (생략 없이 전체 포함)
+// [함수] 메인 홈페이지 HTML
 // =====================================================================================
 function getHTML(logoSrc: string, supabaseUrl: string, supabaseKey: string): string {
   return `<!DOCTYPE html>
@@ -1242,7 +1291,7 @@ function getAdminHTML(contacts: any[]): string {
         <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
           <h1 class="text-2xl font-bold tracking-tight">Eunyeon <span class="text-[#D4AF37]">Admin Center</span></h1>
           <div class="flex items-center gap-6">
-            <span class="text-zinc-400 text-sm">총 문의: <b class="text-[#D4AF37]">\${contacts.length}</b>건</span>
+            <span class="text-zinc-400 text-sm">총 문의: <b class="text-[#D4AF37]">${contacts.length}</b>건</span>
             <a href="/admin/logout" class="text-xs bg-white/10 px-3 py-1.5 rounded hover:bg-white/20 transition-colors">로그아웃</a>
           </div>
         </header>
@@ -1260,30 +1309,30 @@ function getAdminHTML(contacts: any[]): string {
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
-              \${contacts.map(c => \`
+              ${contacts.map(c => `
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                  <td class="p-4 text-zinc-500 whitespace-nowrap">\${new Date(c.created_at).toLocaleString('ko-KR')}</td>
-                  <td class="p-4 font-bold text-zinc-100">\${c.name}<br/><span class="text-xs text-zinc-500 font-normal">\${c.service}</span></td>
-                  <td class="p-4 text-zinc-300">\${c.phone}</td>
-                  <td class="p-4 text-zinc-400 max-w-xs truncate" title="\${c.message}">\${c.message}</td>
+                  <td class="p-4 text-zinc-500 whitespace-nowrap">${new Date(c.created_at).toLocaleString('ko-KR')}</td>
+                  <td class="p-4 font-bold text-zinc-100">${c.name}<br/><span class="text-xs text-zinc-500 font-normal">${c.service}</span></td>
+                  <td class="p-4 text-zinc-300">${c.phone}</td>
+                  <td class="p-4 text-zinc-400 max-w-xs truncate" title="${c.message}">${c.message}</td>
                   <td class="p-4 text-center">
                     <form method="POST" action="/admin/status" class="inline">
-                      <input type="hidden" name="id" value="\${c.id}" />
-                      <input type="hidden" name="status" value="\${c.status || '대기중'}" />
-                      <button type="submit" class="px-3 py-1 rounded text-xs font-bold transition-colors \${c.status === '처리완료' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30'}">
-                        \${c.status || '대기중'}
+                      <input type="hidden" name="id" value="${c.id}" />
+                      <input type="hidden" name="status" value="${c.status || '대기중'}" />
+                      <button type="submit" class="px-3 py-1 rounded text-xs font-bold transition-colors ${c.status === '처리완료' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/30'}">
+                        ${c.status || '대기중'}
                       </button>
                     </form>
                   </td>
                   <td class="p-4 text-center">
                     <form method="POST" action="/admin/delete" class="inline" onsubmit="return confirm('정말 이 문의를 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.');">
-                      <input type="hidden" name="id" value="\${c.id}" />
+                      <input type="hidden" name="id" value="${c.id}" />
                       <button type="submit" class="text-red-400 hover:text-red-300 bg-red-400/10 hover:bg-red-400/20 px-3 py-1 rounded text-xs transition-colors">삭제</button>
                     </form>
                   </td>
                 </tr>
-              \`).join('')}
-              \${contacts.length === 0 ? '<tr><td colspan="6" class="p-8 text-center text-zinc-500">들어온 문의가 없습니다.</td></tr>' : ''}
+              `).join('')}
+              ${contacts.length === 0 ? '<tr><td colspan="6" class="p-8 text-center text-zinc-500">들어온 문의가 없습니다.</td></tr>' : ''}
             </tbody>
           </table>
         </div>
