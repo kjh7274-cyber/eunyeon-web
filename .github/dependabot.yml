@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # 1. npm 패키지(Hono, Supabase 등) 자동 업데이트 설정
+  - package-ecosystem: "npm"
+    directory: "/" # 루트 폴더의 package.json을 감시합니다.
+    schedule:
+      interval: "weekly" # 너무 자주 오면 귀찮으니 매주 한 번씩 체크!
+    open-pull-requests-limit: 5 # 한 번에 너무 많은 제안을 하지 않도록 제한
+
+  # 2. GitHub Actions를 사용하신다면 이것도 추가 (선택사항)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
