@@ -245,6 +245,7 @@ body {
 <div id="root"></div>
 
 <script type="text/babel">
+/* @jsxRuntime classic */
 const { useRef, useState, useEffect, useCallback } = React;
 const { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } = window.Motion;
 
@@ -1341,7 +1342,5 @@ function getAdminHTML(contacts: any[]): string {
     </html>
   `;
 }
-
-export default handle(app)
 
 export default handle(app)
