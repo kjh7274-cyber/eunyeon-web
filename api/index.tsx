@@ -1343,3 +1343,5 @@ function getAdminHTML(contacts: any[]): string {
 }
 
 export default handle(app)
+
+export default handle(app)
